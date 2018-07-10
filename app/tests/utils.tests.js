@@ -5,6 +5,7 @@ const sinon = require("sinon");
 
 const utils = rewire('../controller/server-utils/utils.js');
 
+
 const pathTo404Page = '../../views/404.html';
 
 let result = {
