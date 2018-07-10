@@ -14,10 +14,6 @@ let result = {
     failingTests : []
 }
 
-function ifTrueMsg(testId, fn){
-    console.log(`Test ID: ${testId}\n@PASSED: ${fn.name}`);
-    console.log('---------------------------------');
-}
 
 function callTests(){
     shouldResoultValidContenttype();
@@ -38,6 +34,11 @@ function printResults() {
         console.log('Failing Tests:');
         console.log(result.failingTests);
     }
+}
+
+function ifTrueMsg(testId, fn){
+    console.log(`Test ID: ${testId}\n@PASSED: ${fn.name}`);
+    console.log('---------------------------------');
 }
 
 function shouldResoultValidContenttype() {
