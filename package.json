@@ -1,0 +1,16 @@
+{
+  "name": "art-works",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./app/tests/*.tests.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "rewire": "^4.0.1",
+    "sinon": "^6.1.3"
+  }
+}
