@@ -2,18 +2,15 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
-const feedback = require('./assets/feedback.json');
-const artists = require('./assets/speakers.json');
-console.log(JSON.stringify(feedback, undefined, 2));
-console.log('-----------------');
-console.log(JSON.stringify(artists, undefined, 2));
-//const {MongoClient} = require('mongodb');
+const {MongoClient} = require('mongodb');
+
 const port = 3000;
-const {respondWithFile, sendFile} = require('./server-utils/utils.js')
+const {respondWithFile} = require('./modules/respond-with-file.js')
+const {trimmPath} = require('./server-utils/utils.js');
 
 const publicFolder = '../public';
 
-/*let collection = 'artWorkUsers';
+let collection = 'artWorkUsers';
 let dbUrl = `mongodb://localhost:27017/${collection}`;
 let db;
 
@@ -23,21 +20,24 @@ MongoClient.connect(dbUrl, {useNewUrlParser: true}, (err, client) => {
     db = client.db('TodoApp');
 
     startServer();   
-});*/
+});
 
 function startServer() {
     http.createServer((req, res) => {
-        let reqPath = url.parse(req.url).pathname
-
-        routeHandler(res, reqPath);
+        let parsedUrl = url.parse(req.url, true)
+        parsedUrl.pathname = trimmPath(parsedUrl.pathname);
+        
+        routeHandler(res, parsedUrl);
     }).listen(port);
 };
 
-function routeHandler(res, reqPath) {
+function routeHandler(res, parsedUrl) {
+    let reqPath = parsedUrl.pathname;
+
     if (path.extname(reqPath)) {
         serveStaticFiles(res, reqPath);
     } else {
-        servePages(res, reqPath);
+        servePages(res, parsedUrl);
     }
 }
 
@@ -53,7 +53,10 @@ function serveStaticFiles(res, reqPath) {
     }
 }
 
-function servePages(res, reqPath) {
+function servePages(res, parsedUrl) {
+    let queryStringObj = parsedUrl.query;
+    let reqPath = parsedUrl.pathname;
+
     let homePagePath = '../views/home.ejs';
     let aboutPagePath = '../views/about.ejs';
     let contactPagePath = '../views/contac.ejs';
@@ -68,9 +71,3 @@ function servePages(res, reqPath) {
         respondWithFile(res, null, '404');
     }
 };
-
-startServer();
-// send files fn
-// serve static files
-// serve queries
-// routeHandler

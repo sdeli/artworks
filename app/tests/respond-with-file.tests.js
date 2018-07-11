@@ -3,7 +3,7 @@ const path = require('path');
 const rewire = require("rewire");
 const sinon = require("sinon");
 
-const utils = rewire('../controller/server-utils/utils.js');
+const respondWithFile = rewire('../controller/modules/respond-with-file.js');
 
 
 const pathTo404Page = '../../views/404.html';
@@ -45,7 +45,7 @@ function shouldResoultValidContenttype() {
     let testId = 1;
 
     try {
-        let contentType = utils.getContentType('/advert.jpg');   
+        let contentType = respondWithFile.getContentType('/advert.jpg');   
 
         if (contentType === 'image/jpg') {
             ifTrueMsg(testId, shouldResoultValidContenttype);
@@ -72,7 +72,7 @@ function shouldResoultValidContenttype_2() {
     let testId = 2;
 
     try {
-        let contentType = utils.getContentType('/advert.png');   
+        let contentType = respondWithFile.getContentType('/advert.png');   
 
         if (contentType === 'image/png') {
             ifTrueMsg(testId, shouldResoultValidContenttype_2);
@@ -99,7 +99,7 @@ function shouldResoultValidContenttype_3() {
     let testId = 3;
 
     try {
-        let contentType = utils.getContentType('/advert.json');   
+        let contentType = respondWithFile.getContentType('/advert.json');   
 
         if (contentType === 'application/json') {
             ifTrueMsg(testId, shouldResoultValidContenttype_3);
@@ -126,7 +126,7 @@ function shouldResoultValidContenttype_4() {
     let testId = 4;
 
     try {
-        let contentType = utils.getContentType('/advert.js');   
+        let contentType = respondWithFile.getContentType('/advert.js');   
 
         if (contentType === 'text/javascript') {
             ifTrueMsg(testId, shouldResoultValidContenttype_4);
@@ -153,7 +153,7 @@ function shouldResoultValidContenttype_5() {
     let testId = 5;
 
     try {
-        let contentType = utils.getContentType('/advert.gif');   
+        let contentType = respondWithFile.getContentType('/advert.gif');   
 
         if (contentType === 'image/gif') {
             ifTrueMsg(testId, shouldResoultValidContenttype_5);
@@ -180,7 +180,7 @@ let sendFile = sinon.spy();
 let res = {
     writeHead : sinon.spy()
 }
-utils.__set__('sendFile', sendFile);
+respondWithFile.__set__('sendFile', sendFile);
 
 function respondWithFileTest_1() {
     let testId = 6;
@@ -190,7 +190,7 @@ function respondWithFileTest_1() {
         let statusCodeTest = 200;
         let contentTypeTest ='text/javascript';
 
-        utils.respondWithFile(res, FilePathTest, {});
+        respondWithFile.respondWithFile(res, FilePathTest, {});
 
         var wasCalled = sendFile.callCount > 0;
 
@@ -230,7 +230,7 @@ function respondWithFileTest_1() {
         let statusCodeTest = 200;
         let contentTypeTest ='image/png';
 
-        utils.respondWithFile(res, FilePathTest, {});
+        respondWithFile.respondWithFile(res, FilePathTest, {});
 
         var wasCalled = sendFile.callCount > 0;
 
@@ -270,7 +270,7 @@ function respondWithFileTest_1() {
         let statusCodeTest = 200;
         let contentTypeTest ='image/jpg';
 
-        utils.respondWithFile(res, FilePathTest, {});
+        respondWithFile.respondWithFile(res, FilePathTest, {});
 
         var wasCalled = sendFile.callCount > 0;
 
