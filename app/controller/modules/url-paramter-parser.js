@@ -1,6 +1,7 @@
 /*
  * Title: url parameter parser
  * Description: extracts url paramters and compares the Url path with the route
+ *     - arguments of urlParameterParser: urlPath, route, callback
  *     - a parameter: each string after a / with a :
  *     - at first it checks if url and route are identical, if not returns false
  *     to be identical: 
@@ -9,42 +10,52 @@
  *             - if there are parameters, then all path-units before and after the parameter should be 
  *              identical (in the urlpath and route)
  *             - if there are no url params then all path-untis should be identical
- *     - if there are params in the Urlpath and route and Url path are identical, calls th passed *       the parameters
- *     - if there are no url-params and url and path are identical it calls the callback without parameters
- *     - arguments of urlParameterParser: urlPath, route, callback
+ *     - if route and Url path are identical, callbackFn will be called, with the path-parameters passed 
  *                
  * Author: Sandor Deli
  * logic: 
- *
  */
-let reqUrlPath = 'kicsi/jozsi/about/feco/tacsi/kicsi/okor/tibi';
-let route = 'kicsi/jozsi/about/:who2/tacsi/:kicsi/okor/:who3';
 
-let reqUrlPathB = 'kicsi/jozsi/about/feco/tacsi/kicsi/okor/tibi';
-let routeB = 'kicsi/jozsi/about/:who2/tacsi/:whoka/okor/:who3';
+let UrlParameterParser = (function(){
+    let haveResolvedParser = false;
 
-let reqUrlPathC = 'kicsi/jozsi/about/feco/tacsi/kicsi/okor/tibi/asdasdasd';
-let routeC = 'kicsi/jozsi/about/:who2/tacsi/:whoka/okor/:who3';
+    function parse(reqUrlPath, route, callBackFn){
+        if (haveResolvedParser === true) return false;
 
-let paramsObj = urlParameterParser(reqUrlPath, route);
-let paramsObjB = urlParameterParser(reqUrlPathB, routeB);
-let paramsObjC = urlParameterParser(reqUrlPathC, routeC);
-console.log(paramsObj);
-console.log(paramsObjB);
-console.log(paramsObjC);
-function urlParameterParser(reqUrlPath, route){
-    let reqUrlPathArr = reqUrlPath.split('/');
-    let routeArr = route.split('/');
-    let ifPathUnitsLengthMatch = reqUrlPathArr.length === routeArr.length;
-    if (!ifPathUnitsLengthMatch) return false;
+        isEdgeCase = checkEdgeCases(reqUrlPath, route)
+        if (isEdgeCase) {
+            haveResolvedParser = true;
+            callBackFn();
+            return;
+        }
 
-    let pathVarIndexes = getIndexesOfPathVars(routeArr);
-    let doRouteAndReqUrlPathMatch = checkIfRouteAndReqUrlPathMatch(routeArr, pathVarIndexes, reqUrlPathArr);
+        let reqUrlPathArr = removeEmptyIndexesInArr(reqUrlPath.split('/'));
+        let routeArr = removeEmptyIndexesInArr(route.split('/'));
+        let ifPathUnitsLengthMatch = reqUrlPathArr.length === routeArr.length;
+        if (!ifPathUnitsLengthMatch) return false;
 
-    if (doRouteAndReqUrlPathMatch && pathVarIndexes.length > 0) {
-        let pathVarsObj = getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr)
-        return pathVarsObj;
-    } else if (doRouteAndUrlPathMatch && pathVarIndexes.length === 0) {
+        let pathVarIndexes = getIndexesOfPathVars(routeArr);
+        let doRouteAndReqUrlPathMatch = checkIfRouteAndReqUrlPathMatch(routeArr, pathVarIndexes, reqUrlPathArr);
+
+        if (doRouteAndReqUrlPathMatch) {
+            let pathVarsObj = getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr)
+            haveResolvedParser = true;
+            callBackFn(pathVarsObj);
+            return;
+        } else {
+            return false;
+        }
+    }
+
+    return {
+        parse
+    }
+});
+
+function checkEdgeCases(reqUrlPath, route) {
+    if (reqUrlPath === '*') {
+        return true;
+    } else if ((reqUrlPath === '/' || reqUrlPath === '') && route === '/') {
         return true;
     } else {
         return false;
@@ -86,4 +97,12 @@ function getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr) {
     });
 
     return pathVarsObj;
+}
+
+function removeEmptyIndexesInArr(arr) {
+    return arr.filter(currItem => currItem !== '');
+}
+
+module.exports = {
+    UrlParameterParser
 }

@@ -2,12 +2,14 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
+
 const {MongoClient} = require('mongodb');
 
-const port = 3000;
-const {respondWithFile} = require('./modules/respond-with-file.js')
+const {respondWithFile} = require('./modules/respond-with-file.js');
 const {trimmPath} = require('./server-utils/utils.js');
+const {UrlParameterParser} = require('./modules/url-paramter-parser.js');
 
+const port = 3000;
 const publicFolder = '../public';
 
 let collection = 'artWorkUsers';
@@ -25,8 +27,8 @@ MongoClient.connect(dbUrl, {useNewUrlParser: true}, (err, client) => {
 function startServer() {
     http.createServer((req, res) => {
         let parsedUrl = url.parse(req.url, true)
-        parsedUrl.pathname = trimmPath(parsedUrl.pathname);
-        
+        parsedUrl.path = trimmPath(parsedUrl.path);
+
         routeHandler(res, parsedUrl);
     }).listen(port);
 };
@@ -42,7 +44,6 @@ function routeHandler(res, parsedUrl) {
 }
 
 function serveStaticFiles(res, reqPath) {
-    // check if file exist
     let filePath = `${publicFolder}${reqPath}`;
     let ifFileExist = fs.existsSync(filePath);
 
@@ -61,13 +62,21 @@ function servePages(res, parsedUrl) {
     let aboutPagePath = '../views/about.ejs';
     let contactPagePath = '../views/contac.ejs';
 
-    if (reqPath === '/') {
+    let urlParameterParser = UrlParameterParser().parse;
+
+    urlParameterParser(reqPath, '/', () => {
         respondWithFile(res, homePagePath, {contentType : 'text/html'});
-    } else if (reqPath === '/about') {
+    });
+
+    urlParameterParser(reqPath, '/about', () => {
         respondWithFile(res, aboutPagePath, {contentType : 'text/html'});
-    } else if (reqPath === '/contact') {
+    });
+
+    urlParameterParser(reqPath, '/contact', () => {
         respondWithFile(res, contactPagePath, {contentType : 'text/html'});
-    } else {
+    });
+
+    urlParameterParser('*', null,  () => {
         respondWithFile(res, null, '404');
-    }
+    });
 };

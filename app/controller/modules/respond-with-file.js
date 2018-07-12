@@ -50,6 +50,9 @@ function sendFile(res, filePath) {
     });
 
     reader.pipe(res);
+    res.on('finsh', () => {
+        res.end();
+    });
 }
 
 module.exports = {
