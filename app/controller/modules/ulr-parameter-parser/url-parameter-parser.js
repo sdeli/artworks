@@ -2,31 +2,33 @@
  * Title: url parameter parser
  * Description: extracts url paramters and compares the Url path with the route
  *     - arguments of urlParameterParser: urlPath, route, callback
- *     - a parameter: each string after a / with a :
- *     - at first it checks if url and route are identical, if not returns false
+ *     - a path-parameter: each string after a / with a :
+ *     - At first it checks if function has already been called succesfull/if once the route and urlpath has matched. If yes function returns false
+ *     - It checks for edge case, if curr is an edge case calls callback and returns   
+ *     - It checks if url and route are identical, if not returns false
  *     to be identical: 
- *             - number of path-units (path-unit => a string after a / sign until the next one or in case of 
+ *             - number of path-units (path-unit => a string after a / sign until the next one or in case *             of 
  *             - last path-unit - after the last / sign - until the end of the path) should be identical
  *             - if there are parameters, then all path-units before and after the parameter should be 
  *              identical (in the urlpath and route)
  *             - if there are no url params then all path-untis should be identical
  *     - if route and Url path are identical, callbackFn will be called, with the path-parameters passed 
- *                
+ *                      
  * Author: Sandor Deli
  * logic: 
  */
 
 let UrlParameterParser = (function(){
-    let haveResolvedParser = false;
+    let wasAlreadyMatch = false;
 
     function parse(reqUrlPath, route, callBackFn){
-        if (haveResolvedParser === true) return false;
+        if (wasAlreadyMatch === true) return false;
 
         isEdgeCase = checkEdgeCases(reqUrlPath, route)
         if (isEdgeCase) {
-            haveResolvedParser = true;
-            callBackFn();
-            return;
+            wasAlreadyMatch = true;
+            callBackFn({});
+            return true;
         }
 
         let reqUrlPathArr = removeEmptyIndexesInArr(reqUrlPath.split('/'));
@@ -39,9 +41,9 @@ let UrlParameterParser = (function(){
 
         if (doRouteAndReqUrlPathMatch) {
             let pathVarsObj = getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr)
-            haveResolvedParser = true;
+            wasAlreadyMatch = true;
             callBackFn(pathVarsObj);
-            return;
+            return true;
         } else {
             return false;
         }
@@ -104,5 +106,10 @@ function removeEmptyIndexesInArr(arr) {
 }
 
 module.exports = {
-    UrlParameterParser
+    UrlParameterParser,
+    checkEdgeCases,
+    checkIfRouteAndReqUrlPathMatch,
+    getIndexesOfPathVars,
+    getPathVariables,
+    removeEmptyIndexesInArr,
 }

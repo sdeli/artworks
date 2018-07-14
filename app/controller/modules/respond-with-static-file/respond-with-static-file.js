@@ -1,20 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-const pathTo404Page = '../../views/404.html';
+function respondWithStaticFile(res, filePath, options) {
+    options = options || {};
+    let statusCode = options.statusCode || 200;
+    let contentType = options.contentType || getContentType(filePath);
 
-function respondWithFile(res, filePath, options) {
-    if (options !== '404') {
-        options = options || {};
-        let statusCode = options.statusCode || 200;
-        let contentType = options.contentType || getContentType(filePath);
-
-        res.writeHead(statusCode, {'Content-Type' : contentType});
-        sendFile(res, filePath);
-    } else {
-        res.writeHead(404, {'Content-Type' : 'text/html'})
-        sendFile(res, pathTo404Page);
-    }
+    res.writeHead(statusCode, {'Content-Type' : contentType});
+    sendStaticFile(res, filePath);
 }
 
 function getContentType(filePath) {
@@ -41,10 +34,10 @@ function getContentType(filePath) {
     return contentType;
 }
 
-function sendFile(res, filePath) {
+function sendStaticFile(res, filePath) {
     let reader = fs.createReadStream(filePath);
 
-    reader.on('error', () => {
+    reader.on('geza', () => {
         res.writeHead(404, {'Content-Type' : 'text/html'});
         res.end('<h1>404\nThere Has been an issue with the file pleasse check with your site admin</h1>');
     });
@@ -56,7 +49,7 @@ function sendFile(res, filePath) {
 }
 
 module.exports = {
-    respondWithFile,
+    respondWithStaticFile,
     getContentType,
-    sendFile
+    sendStaticFile
 }
