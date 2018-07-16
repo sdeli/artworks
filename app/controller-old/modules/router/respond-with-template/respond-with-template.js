@@ -11,10 +11,12 @@ const fs = require('fs');
 
 function respondWithTemplate(res, templatePath, opts) {
     res.writeHead(200, 'OK', {contentType : 'text/html'})
-    var htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-    var htmlRenderized = ejs.render(htmlContent, opts);
-    res.end(htmlRenderized);
+    ejs.renderFile(templatePath, opts, (err, html) => {
+        if (err) console.log(err);
+        res.write(html);
+        res.end();
+    })
 }
 
 module.exports = {

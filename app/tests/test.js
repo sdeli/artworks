@@ -12,12 +12,17 @@ var res = {
     }
 }
 
-respondWithTemplate(res, '../views/about.ejs', {welcome : 'te majom'})
-
 function respondWithTemplate(res, templatePath, opts) {
     res.writeHead(200, 'OK', {contentType : 'text/html'})
-    var htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-    var htmlRenderized = ejs.render(htmlContent, opts);
+    var htmlRenderized = ejs.renderFile(templatePath, opts);
     res.end(htmlRenderized);
 }
+
+respondWithTemplate(res, '../views/chat.ejs', {
+    pageTitle : 'faszom',
+    siteTitle : 'ideoda',
+    pageID : 'majom'
+})
+
+module.exports = respondWithTemplate;
