@@ -4,18 +4,25 @@ const listen = require('./modules/listen/listen.js');
 function createServerObj() {
     return {
         listen,
-        globalVars : [],
         routeHandler : {
             routesArr : [],
             router,
+            ejsGlobals : {}
         },
         route : function (path, callBack) {
             this.routeHandler.routesArr.push({
                 path,
                 callBack
             });
+            console.log(this.routeHandler.routesArr);
         },
-        setLocal : ''
+        set ejsGlobals(newGlobals) {
+            let ejsGlobals = this.routeHandler.ejsGlobals;
+
+            for (key in newGlobals) {
+                ejsGlobals[key] = newGlobals[key];
+            }
+        }
     }
 }
 

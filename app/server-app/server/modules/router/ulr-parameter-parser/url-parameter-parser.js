@@ -18,39 +18,27 @@
  * logic: 
  */
 
-let UrlParameterParser = (function(){
-    let wasAlreadyMatch = false;
-
-    function parse(reqUrlPath, route, callBackFn){
-        if (wasAlreadyMatch === true) return false;
-
-        isEdgeCase = checkEdgeCases(reqUrlPath, route)
-        if (isEdgeCase) {
-            wasAlreadyMatch = true;
-            return {};
-        }
-
-        let reqUrlPathArr = removeEmptyIndexesInArr(reqUrlPath.split('/'));
-        let routeArr = removeEmptyIndexesInArr(route.split('/'));
-        let ifPathUnitsLengthMatch = reqUrlPathArr.length === routeArr.length;
-        if (!ifPathUnitsLengthMatch) return false;
-
-        let pathVarIndexes = getIndexesOfPathVars(routeArr);
-        let doRouteAndReqUrlPathMatch = checkIfRouteAndReqUrlPathMatch(routeArr, pathVarIndexes, reqUrlPathArr);
-
-        if (doRouteAndReqUrlPathMatch) {
-            let pathVarsObj = getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr)
-            wasAlreadyMatch = true;
-            return pathVarsObj;
-        } else {
-            return false;
-        }
+function urlParameterParser(reqUrlPath, route){
+    isEdgeCase = checkEdgeCases(reqUrlPath, route)
+    if (isEdgeCase) {
+        return {};
     }
 
-    return {
-        parse
+    let reqUrlPathArr = removeEmptyIndexesInArr(reqUrlPath.split('/'));
+    let routeArr = removeEmptyIndexesInArr(route.split('/'));
+    let ifPathUnitsLengthMatch = reqUrlPathArr.length === routeArr.length;
+    if (!ifPathUnitsLengthMatch) return false;
+
+    let pathVarIndexes = getIndexesOfPathVars(routeArr);
+    let doRouteAndReqUrlPathMatch = checkIfRouteAndReqUrlPathMatch(routeArr, pathVarIndexes, reqUrlPathArr);
+
+    if (doRouteAndReqUrlPathMatch) {
+        let pathVarsObj = getPathVariables(routeArr, pathVarIndexes, reqUrlPathArr)
+        return pathVarsObj;
+    } else {
+        return false;
     }
-});
+};
 
 function checkEdgeCases(reqUrlPath, route) {
     if (reqUrlPath === '*') {
@@ -104,7 +92,7 @@ function removeEmptyIndexesInArr(arr) {
 }
 
 module.exports = {
-    UrlParameterParser,
+    urlParameterParser,
     checkEdgeCases,
     checkIfRouteAndReqUrlPathMatch,
     getIndexesOfPathVars,

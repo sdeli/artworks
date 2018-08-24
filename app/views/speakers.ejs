@@ -6,7 +6,11 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-8">
-        <% include partials/content/speakerslist.ejs %>
+            <% if (pageID == 'speakerList') { %>
+                <% include partials/content/speakerslist.ejs %>
+              <% } else if (pageID == 'speakerDetail'){ %>
+                <% include partials/content/speakerprofile.ejs %>
+              <% } %>
         </div><!-- primary -->
         <aside class="col-sm-4">
           <% include partials/content/artworklist.ejs %>

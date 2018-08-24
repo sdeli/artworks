@@ -8,7 +8,7 @@ function listen(port) {
         let parsedUrl = url.parse(req.url, true)
         parsedUrl.path = trimmPath(parsedUrl.path);
 
-        this.routeHandler.router(res, parsedUrl);
+        this.routeHandler.router(req, res, parsedUrl);
     }).listen(port);
 }
 

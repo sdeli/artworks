@@ -1,7 +1,7 @@
 <article class="speakerslist <% if (pageID == 'home') { %>jumbotron hidden-xs<% } %>">
   <div class="container">
     <div class="row">
-        <% speakers.forEach(function(item) { %>
+        <% allSpeakers.forEach(function(item) { %>
         <div class="<% if (pageID == 'home') { %>col-sm-4 text-center<% } else { %>col-sm-8 <% } %>">
           <h3 class="speakerslist-title"><%= item.title %></h3>
           <h5 class="speakerslist-name">with <a href="/speakers/<%= item.shortname %>"><%= item.name %></a></h5>

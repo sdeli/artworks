@@ -2,19 +2,18 @@ const fs = require('fs');
 const path = require('path');
 
 const {respondWithStaticFile} = require('./respond-with-static-file/respond-with-static-file.js');
-const {UrlParameterParser} = require('././ulr-parameter-parser/url-parameter-parser.js');
-urlParameterParser = UrlParameterParser().parse;
-const {respondWithTemplate} = require('./respond-with-template/respond-with-template.js');
+const {urlParameterParser} = require('././ulr-parameter-parser/url-parameter-parser.js');
+const getExtendedRes = require('./extend-response-obj/get-extended-response-object.js');
 
 const publicFolder = '../public/';
 
-function routeHandler(res, parsedUrl) {
+function routeHandler(req, res, parsedUrl) {
     let reqPath = parsedUrl.path;
 
     if (path.extname(reqPath)) {
         serveStaticFiles(res, reqPath);
     } else {
-        servePages.call(this, res, parsedUrl);
+        servePages.call(this, req, res, parsedUrl);
     }
 }
 
@@ -33,17 +32,20 @@ function serveStaticFiles(res, reqPath) {
     }
 }
 
-function servePages(res, parsedUrl, db) {
+function servePages(req, res, parsedUrl) {
     let queryStringObj = parsedUrl.query;
     let reqPath = parsedUrl.path;
+    let routesArrLength = this.routesArr.length;
 
-    this.routesArr.forEach((route) => {
-       let pathVariables = urlParameterParser(reqPath, route.path);
-
-       if (pathVariables) {
-            route.callBack(res, pathVariables)
-       }
-    });
+    for (let i = 0; i < routesArrLength; i++) {
+        let route = this.routesArr[i];
+        let pathVariables = urlParameterParser(reqPath, route.path);
+        
+        if (pathVariables) {
+            let extendedResponseObj = getExtendedRes(res, queryStringObj, pathVariables, this.ejsGlobals);
+            route.callBack(req, extendedResponseObj);
+        }
+    }
 };
 
 module.exports = routeHandler;

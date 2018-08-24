@@ -1,0 +1,15 @@
+<article class="speakerslist speakerprofile">
+  <div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+          <h3 class="speakerslist-title"><%= speaker.title %></h3>
+          <h5 class="speakerslist-name">with <a href="/speakers/<%= speaker.shortname %>"><%= speaker.name %></a></h5>
+          <p class="speakerslist-info">
+            <a href="/speakers/<%= speaker.shortname %>"><img class="speakerslist-img img-responsive pull-left" src="/images/speakers/<%= speaker.shortname %>.jpg" alt="Photo of <%= speaker.name %>"></a>
+            <%= speaker.summary %>
+            <%- speaker.description %>
+          </p>
+        </div>
+    </div><!-- row -->
+  </div><!-- container -->
+</article>

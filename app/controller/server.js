@@ -2,6 +2,13 @@ const {MongoClient} = require('mongodb');
 const ejs = require('ejs');
 
 const serverApp = require('../server-app/server-singleton.js');
+const {getArtworks} = require('../model/model-utils/model-utils.js');
+const {getArtwork} = require('../model/model-utils/model-utils.js');
+const {getSingleSpeakerInfos} = require('../model/model-utils/model-utils.js');
+
+const feedBackRoutes = require('./routes/feedback-routes.js');
+const homeRoute = require('./routes/home-route.js');
+const speakersRoutes = require('./routes/speakers-routes.js');
 
 const port = 3000;
 const dbName = 'art-works';
@@ -12,33 +19,15 @@ var server = serverApp.getServer();
 
 MongoClient.connect(dbUrl, {useNewUrlParser: true}, (err, client) => {
     if (err) throw err;
+
     db = client.db();
-    
+    server.ejsGlobals = {
+        siteTitle : 'Roux Meetups'
+    }
+
     server.listen(port);
+    
+    homeRoute(server, db);
+    speakersRoutes(server, db);
+    feedBackRoutes(server, db);
 });
-
-
-server.route('/', (res) => {
-    db.collection('artists').find().toArray()
-    .then((docs) => {
-        res.writeHead(200, 'OK', {contentType : 'text/html'})
-        respondWithTemplate(res, '../views/index.ejs', {
-            siteTitle : 'welcome on home',
-            pageTitle : 'majom',
-            pageID : 'home',
-            allSpeakers : docs
-        })
-    }).catch(e => {
-        console.log(e);
-    })
-});
-
-function respondWithTemplate(res, templatePath, opts) {
-
-    ejs.renderFile(templatePath, opts, (err, html) => {
-        if (err) console.log(err);
-        console.log(html);
-        res.write(html);
-        res.end();
-    })
-}

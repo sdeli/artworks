@@ -176,7 +176,19 @@ header .navbar-inverse .navbar-nav>li>a {
 
 
 .feedback-title {
-  font-size: 1.2em;
+  font-size: 2rem;;
+}
+
+.feedback-title p:nth-child(2) {
+    margin-bottom: 0rem;
+}
+
+.feedback-timestamp {
+    margin-bottom: -0.5rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #bdbdbd;
+    line-height: 2.9rem;
 }
 
 .feedback-form-title {
@@ -186,11 +198,13 @@ header .navbar-inverse .navbar-nav>li>a {
 .feedback-name {
   font-size: .6em;
   font-weight: 100;
+  margin-left: 0.4rem;
+  vertical-align: middle;
 }
 
 .feedback-message {
   font-weight: 100;
-  font-size: .9em;
+  font-size: 1.6rem;
   line-height: 120%;
   margin-top: 5px;
 }
