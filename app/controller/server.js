@@ -10,7 +10,7 @@ const feedBackRoutes = require('./routes/feedback-routes.js');
 const homeRoute = require('./routes/home-route.js');
 const speakersRoutes = require('./routes/speakers-routes.js');
 
-const port = 3000;
+const port = 3500;
 const dbName = 'art-works';
 const dbUrl = `mongodb://localhost:27017/${dbName}`;
 let db;
